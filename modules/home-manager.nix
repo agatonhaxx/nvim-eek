@@ -38,7 +38,8 @@ in
     installPackage = lib.mkOption {
       type = lib.types.package;
       default = defaults.nvim-eek-install.override {
-        inherit (cfg) appName configPackage;
+        appName = cfg.appName;
+        nvim-eek-config = cfg.configPackage;
       };
       description = "The nvim-eek installer package, run at activation.";
     };

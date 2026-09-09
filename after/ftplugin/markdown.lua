@@ -40,3 +40,19 @@ vim.b.minisurround_config = {
     },
   },
 }
+
+-- zk-nvim: buffer-local mappings for a Zettelkasten notebook. Applied only
+-- when the current buffer is inside a notebook root; the plugin is enabled
+-- and globally mapped in 'plugin/40_plugins.lua'.
+local ok, zk_util = pcall(require, 'zk.util')
+if ok and zk_util.notebook_root(vim.fn.expand('%:p')) ~= nil then
+  local map = function(mode, lhs, rhs, desc)
+    vim.keymap.set(mode, lhs, rhs, { buffer = 0, desc = desc })
+  end
+  map('n', '<CR>', '<Cmd>lua vim.lsp.buf.definition()<CR>', 'Follow link')
+  map('n', '<Leader>zn', "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>", 'Create note here')
+  map('n', '<Leader>zb', '<Cmd>ZkBacklinks<CR>', 'Backlinks')
+  map('n', '<Leader>zl', '<Cmd>ZkLinks<CR>', 'Links')
+  map('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', 'Hover')
+  map('x', '<Leader>za', ":'<,'>lua vim.lsp.buf.range_code_action()<CR>", 'Code action (selection)')
+end

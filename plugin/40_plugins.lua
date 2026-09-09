@@ -105,9 +105,9 @@ now_if_args(function()
   -- Uncomment and tweak the following `vim.lsp.enable()` call to enable servers.
   vim.lsp.enable({
     -- For example, if `lua-language-server` is installed, use `'lua_ls'` entry
-    lua_ls
-    nil_ls
-    pyright
+    'lua_ls',
+    'nil_ls',
+    'pyright',
   })
 end)
 
@@ -151,6 +151,7 @@ require("conform").setup({
     },
     notify_on_error = true,
 })
+end)
 
 -- Snippets ===================================================================
 
@@ -161,18 +162,31 @@ require("conform").setup({
 -- snippet files. They are organized in 'snippets/' directory (mostly) per language.
 -- 'mini.snippets' is designed to work with it as seamlessly as possible.
 -- See `:h MiniSnippets.gen_loader.from_lang()`.
-later(function() add({
-  'https://github.com/rafamadriz/friendly-snippets',
-'https://github.com/zk-org/zk-nvim',
-}) end)
+later(function()
+  add({
+    'https://github.com/rafamadriz/friendly-snippets',
+    'https://github.com/zk-org/zk-nvim',
+  })
 
-require("zk").setup({
+  require('zk').setup({
     lsp = {
-        auto_attach = { enabled = true, filetypes = { "markdown" } },
-        config = { cmd = { "zk", "lsp" }, name = "zk" },
+      auto_attach = { enabled = true, filetypes = { 'markdown' } },
+      config = { cmd = { 'zk', 'lsp' }, name = 'zk' },
     },
-    picker = "minipick",
-})
+    picker = 'minipick',
+  })
+end)
+
+-- Global mappings for zk. Buffer-local mappings scoped to a notebook root
+-- live in 'after/ftplugin/markdown.lua'.
+local zmap = function(lhs, rhs, desc)
+  vim.keymap.set('n', lhs, rhs, { desc = desc })
+end
+zmap('<Leader>zn', "<Cmd>ZkNew { title = vim.fn.input('Title: ') }<CR>", 'Create Zk note')
+zmap('<Leader>zo', "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", 'Open Zk notes')
+zmap('<Leader>zt', '<Cmd>ZkTags<CR>', 'Open Zk notes with tag')
+zmap('<Leader>zf', "<Cmd>ZkNotes { sort = { 'modified' }, match = { vim.fn.input('Search: ') } }<CR>", 'Find Zk note')
+vim.keymap.set('x', '<Leader>zf', ":'<,'>ZkMatch<CR>", { desc = 'Find Zk note from selection' })
 
 -- Honorable mentions =========================================================
 

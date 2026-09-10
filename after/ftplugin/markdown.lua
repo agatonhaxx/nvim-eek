@@ -45,29 +45,27 @@ vim.b.minisurround_config = {
 -- when the current buffer is inside a notebook root; the plugin is enabled
 -- and globally mapped in 'plugin/40_plugins.lua'.
 if require("zk.util").notebook_root(vim.fn.expand("%:p")) ~= nil then
-	local function map(...)
-		vim.api.nvim_buf_set_keymap(0, ...)
+	local map = function(mode, lhs, rhs, desc)
+		vim.api.nvim_buf_set_keymap(mode, lhs, rhs, { buffer = 0, desc = desc })
 	end
-	local opts = { noremap = true, silent = false }
 
 	-- Open the link under the caret.
-	map("n", "<CR>", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts, { desc = "Follow Markdown Link" })
+	map("n", "<CR>", "<Cmd>lua vim.lsp.buf.definition()<CR>", "Follow Link")
+	map("n", "<leader>zn", "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>", "ZkNew")
 	map(
 		"v",
 		"<leader>znt",
 		":'<,'>ZkNewFromTitleSelection { dir = vim.fn.expand('%:p:h') }<CR>",
-		opts,
-		{ desc = "ZkNewFromTitleSelection" }
+		"ZkNewFromTitleSelection"
 	)
 	map(
 		"v",
 		"<leader>znc",
 		":'<,'>ZkNewFromContentSelection { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>",
-		opts,
-		{ desc = "ZkNewFromContentSelection" }
+		"ZkNewFromContentSelection"
 	)
-	map("n", "<leader>zb", "<Cmd>ZkBacklinks<CR>", opts, { desc = "ZkBacklinks" })
-	map("n", "<leader>zl", "<Cmd>ZkLinks<CR>", opts, { desc = "ZkLinks" })
-	map("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", opts, { desc = "Preview Linked Note" })
-	map("v", "<leader>za", ":'<,'>lua vim.lsp.buf.range_code_action()<CR>", opts, { desc = "Zk Code Action" })
+	map("n", "<leader>zb", "<Cmd>ZkBacklinks<CR>", "ZkBackLinks")
+	map("n", "<leader>zl", "<Cmd>ZkLinks<CR>", "ZkLinks")
+	map("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", "Preview Link")
+	map("v", "<leader>za", ":'<,'>lua vim.lsp.buf.range_code_action()<CR>", "Zk Code Action")
 end

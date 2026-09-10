@@ -46,7 +46,7 @@ vim.b.minisurround_config = {
 -- and globally mapped in 'plugin/40_plugins.lua'.
 if require("zk.util").notebook_root(vim.fn.expand("%:p")) ~= nil then
 	local map = function(mode, lhs, rhs, desc)
-		vim.api.nvim_buf_set_keymap(mode, lhs, rhs, { buffer = 0, desc = desc })
+		vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, { noremap = true, silent = false, desc = desc })
 	end
 
 	-- Open the link under the caret.

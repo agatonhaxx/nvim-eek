@@ -165,8 +165,14 @@ end)
 later(function()
   add({
     'https://github.com/rafamadriz/friendly-snippets',
-    'https://github.com/zk-org/zk-nvim',
   })
+end)
+
+-- zk must be on 'runtimepath' before 'after/ftplugin/markdown.lua' runs: that
+-- ftplugin requires 'zk.util' on 'FileType markdown', which fires during
+-- startup when opening a file, before `later` callbacks run.
+now_if_args(function()
+  add({ 'https://github.com/zk-org/zk-nvim' })
 
   require('zk').setup({
     lsp = {

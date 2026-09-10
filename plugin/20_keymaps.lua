@@ -124,12 +124,18 @@ nmap_leader('eQ', explore_locations,                        'Location list')
 -- - `<Leader>ff` - find files; for best performance requires `ripgrep`
 -- - `<Leader>fg` - find inside files; requires `ripgrep`
 -- - `<Leader>fh` - find help tag
+-- - `<Leader>fn` - live grep inside navi cheats; requires `ripgrep`
 -- - `<Leader>fr` - resume latest picker
 -- - `<Leader>fv` - all visited paths; requires 'mini.visits'
 --
 -- All these use 'mini.pick'. See `:h MiniPick-overview` for an overview.
 local pick_added_hunks_buf = '<Cmd>Pick git_hunks path="%" scope="staged"<CR>'
 local pick_workspace_symbols_live = '<Cmd>Pick lsp scope="workspace_symbol_live"<CR>'
+
+-- Live grep scoped to personal navi cheat files
+local pick_cheats = function()
+	MiniPick.builtin.grep_live({}, { source = { name = 'Cheats', cwd = vim.fn.expand('~/dev/git/navi-eek') } })
+end
 
 nmap_leader('f/', '<Cmd>Pick history scope="/"<CR>',            '"/" history')
 nmap_leader('f:', '<Cmd>Pick history scope=":"<CR>',            '":" history')
@@ -150,6 +156,7 @@ nmap_leader('fl', '<Cmd>Pick buf_lines scope="all"<CR>',        'Lines (all)')
 nmap_leader('fL', '<Cmd>Pick buf_lines scope="current"<CR>',    'Lines (buf)')
 nmap_leader('fm', '<Cmd>Pick git_hunks<CR>',                    'Modified hunks (all)')
 nmap_leader('fM', '<Cmd>Pick git_hunks path="%"<CR>',           'Modified hunks (buf)')
+nmap_leader('fn', pick_cheats,                                  'Cheats')
 nmap_leader('fr', '<Cmd>Pick resume<CR>',                       'Resume')
 nmap_leader('fR', '<Cmd>Pick lsp scope="references"<CR>',       'References (LSP)')
 nmap_leader('fs', pick_workspace_symbols_live,                  'Symbols workspace (live)')

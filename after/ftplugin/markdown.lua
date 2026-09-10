@@ -44,28 +44,20 @@ vim.b.minisurround_config = {
 -- zk-nvim: buffer-local mappings for a Zettelkasten notebook. Applied only
 -- when the current buffer is inside a notebook root; the plugin is enabled
 -- and globally mapped in 'plugin/40_plugins.lua'.
-if require("zk.util").notebook_root(vim.fn.expand("%:p")) ~= nil then
+local ok, zk_util = pcall(require, "zk.util")
+if ok and zk_util.notebook_root(vim.fn.expand("%:p")) ~= nil then
 	local map = function(mode, lhs, rhs, desc)
-		vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, { noremap = true, silent = false, desc = desc })
+		vim.keymap.set(mode, lhs, rhs, { buffer = 0, desc = desc })
 	end
-
-	-- Open the link under the caret.
-	map("n", "<CR>", "<Cmd>lua vim.lsp.buf.definition()<CR>", "Follow Link")
-	map("n", "<leader>zn", "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>", "ZkNew")
+	map("n", "<CR>", "<Cmd>lua vim.lsp.buf.definition()<CR>", "Follow link")
 	map(
-		"v",
-		"<leader>znt",
-		":'<,'>ZkNewFromTitleSelection { dir = vim.fn.expand('%:p:h') }<CR>",
-		"ZkNewFromTitleSelection"
+		"n",
+		"<Leader>zn",
+		"<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>",
+		"Create note here"
 	)
-	map(
-		"v",
-		"<leader>znc",
-		":'<,'>ZkNewFromContentSelection { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>",
-		"ZkNewFromContentSelection"
-	)
-	map("n", "<leader>zb", "<Cmd>ZkBacklinks<CR>", "ZkBackLinks")
-	map("n", "<leader>zl", "<Cmd>ZkLinks<CR>", "ZkLinks")
-	map("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", "Preview Link")
-	map("v", "<leader>za", ":'<,'>lua vim.lsp.buf.range_code_action()<CR>", "Zk Code Action")
+	map("n", "<Leader>zb", "<Cmd>ZkBacklinks<CR>", "Backlinks")
+	map("n", "<Leader>zl", "<Cmd>ZkLinks<CR>", "Links")
+	map("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", "Hover")
+	map("x", "<Leader>za", ":'<,'>lua vim.lsp.buf.range_code_action()<CR>", "Code action (selection)")
 end

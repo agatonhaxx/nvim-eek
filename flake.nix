@@ -14,7 +14,6 @@
     {
       self,
       nixpkgs,
-      home-manager,
     }:
     let
       systems = [

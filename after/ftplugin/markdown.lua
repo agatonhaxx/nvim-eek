@@ -16,43 +16,65 @@
 -- See `:h mini.nvim-buffer-local-config` and `:h mini.nvim-disabling-recipes`.
 
 -- Enable spelling and wrap for window
-vim.cmd('setlocal spell wrap')
+vim.cmd("setlocal spell wrap")
 
 -- Fold with tree-sitter
-vim.cmd('setlocal foldmethod=expr foldexpr=v:lua.vim.treesitter.foldexpr()')
+vim.cmd("setlocal foldmethod=expr foldexpr=v:lua.vim.treesitter.foldexpr()")
 
 -- Disable built-in `gO` mapping in favor of 'mini.basics'
-vim.keymap.del('n', 'gO', { buffer = 0 })
+vim.keymap.del("n", "gO", { buffer = 0 })
 
 -- Set markdown-specific surrounding in 'mini.surround'
 vim.b.minisurround_config = {
-  custom_surroundings = {
-    -- Markdown link. Common usage:
-    -- `saiwL` + [type/paste link] + <CR> - add link
-    -- `sdL` - delete link
-    -- `srLL` + [type/paste link] + <CR> - replace link
-    L = {
-      input = { '%[().-()%]%(.-%)' },
-      output = function()
-        local link = require('mini.surround').user_input('Link: ')
-        return { left = '[', right = '](' .. link .. ')' }
-      end,
-    },
-  },
+	custom_surroundings = {
+		-- Markdown link. Common usage:
+		-- `saiwL` + [type/paste link] + <CR> - add link
+		-- `sdL` - delete link
+		-- `srLL` + [type/paste link] + <CR> - replace link
+		L = {
+			input = { "%[().-()%]%(.-%)" },
+			output = function()
+				local link = require("mini.surround").user_input("Link: ")
+				return { left = "[", right = "](" .. link .. ")" }
+			end,
+		},
+	},
 }
 
 -- zk-nvim: buffer-local mappings for a Zettelkasten notebook. Applied only
 -- when the current buffer is inside a notebook root; the plugin is enabled
 -- and globally mapped in 'plugin/40_plugins.lua'.
-local ok, zk_util = pcall(require, 'zk.util')
-if ok and zk_util.notebook_root(vim.fn.expand('%:p')) ~= nil then
-  local map = function(mode, lhs, rhs, desc)
-    vim.keymap.set(mode, lhs, rhs, { buffer = 0, desc = desc })
-  end
-  map('n', '<CR>', '<Cmd>lua vim.lsp.buf.definition()<CR>', 'Follow link')
-  map('n', '<Leader>zn', "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>", 'Create note here')
-  map('n', '<Leader>zb', '<Cmd>ZkBacklinks<CR>', 'Backlinks')
-  map('n', '<Leader>zl', '<Cmd>ZkLinks<CR>', 'Links')
-  map('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', 'Hover')
-  map('x', '<Leader>za', ":'<,'>lua vim.lsp.buf.range_code_action()<CR>", 'Code action (selection)')
+if require("zk.util").notebook_root(vim.fn.expand("%:p")) ~= nil then
+	local function map(...)
+		vim.api.nvim_buf_set_keymap(0, ...)
+	end
+	local opts = { noremap = true, silent = false }
+
+	-- Open the link under the caret.
+	map("n", "<CR>", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
+
+	-- Create a new note after asking for its title.
+	-- This overrides the global `<leader>zn` mapping to create the note in the same directory as the current buffer.
+	map("n", "<leader>zn", "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>", opts)
+	-- Create a new note in the same directory as the current buffer, using the current selection for title.
+	map("v", "<leader>znt", ":'<,'>ZkNewFromTitleSelection { dir = vim.fn.expand('%:p:h') }<CR>", opts)
+	-- Create a new note in the same directory as the current buffer, using the current selection for note content and asking for its title.
+	map(
+		"v",
+		"<leader>znc",
+		":'<,'>ZkNewFromContentSelection { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>",
+		opts
+	)
+
+	-- Open notes linking to the current buffer.
+	map("n", "<leader>zb", "<Cmd>ZkBacklinks<CR>", opts)
+	-- Alternative for backlinks using pure LSP and showing the source context.
+	--map('n', '<leader>zb', '<Cmd>lua vim.lsp.buf.references()<CR>', opts)
+	-- Open notes linked by the current buffer.
+	map("n", "<leader>zl", "<Cmd>ZkLinks<CR>", opts)
+
+	-- Preview a linked note.
+	map("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", opts)
+	-- Open the code actions for a visual selection.
+	map("v", "<leader>za", ":'<,'>lua vim.lsp.buf.range_code_action()<CR>", opts)
 end

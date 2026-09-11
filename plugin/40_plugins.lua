@@ -54,7 +54,6 @@ now_if_args(function()
 	-- for the installation to finish before opening a file for added language(s).
 	local languages = {
 		-- These are already pre-installed with Neovim. Used as an example.
-		"json",
 		"lua",
 		"markdown",
 		"vimdoc",
@@ -112,10 +111,11 @@ now_if_args(function()
 	-- Uncomment and tweak the following `vim.lsp.enable()` call to enable servers.
 	vim.lsp.enable({
 		-- For example, if `lua-language-server` is installed, use `'lua_ls'` entry
+		"devenv",
+		"jsonls",
 		"lua_ls",
 		"nil_ls",
 		"pyright",
-		"devenv",
 	})
 end)
 
@@ -149,7 +149,7 @@ later(function()
 			java = { "google-java-format" },
 			javascript = { "prettierd", "prettier", stop_after_first = true },
 			javascriptreact = { "prettierd", "prettier", stop_after_first = true },
-			json = { "jq", "jq", stop_after_first = true },
+			json = { "jsonls", "jsonls", stop_after_first = true },
 			lua = { "stylua" },
 			markdown = { "prettierd", "prettier", stop_after_first = true },
 			nix = { "nixfmt" },

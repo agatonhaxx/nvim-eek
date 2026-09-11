@@ -21,7 +21,7 @@
   nixfmt,
   black,
   rustfmt,
-  vscode-json-language-server,
+  vscode-json-languageserver,
   zk,
   appName ? "nvim",
   withCompiler ? true,
@@ -43,7 +43,7 @@ writeShellApplication {
     nixfmt
     black
     rustfmt
-    vscode-json-language-server
+    vscode-json-languageserver
     zk
   ]
   ++ lib.optionals withCompiler [ stdenv.cc ];

@@ -102,9 +102,7 @@
       "\t\t# treefmt --check",
       "\t'';",
       "\t}"
-    ],
-    "description": "Devenv skeleton",
-    "scope": "devenv.nix"
+    ]
   },
   "sops-script": {
     "prefix": "sops-script",
@@ -122,9 +120,7 @@
       "",
       "\tsops-encrypt.exec = \"sops -e secrets.yaml > secrets.enc.yaml\";",
       ""
-    ],
-    "description": "Sops script",
-    "scope": "devenv.nix"
+    ]
   },
   "ci-strict": {
     "prefix": "ci-strict",
@@ -138,9 +134,7 @@
       "\t\techo \"4. Go test\" && go test ./... || exit 1",
       "\t\techo \"🚀 All strict checks passed!\"",
       "\t'';"
-    ],
-    "description": "CI Strict",
-    "scope": "devenv.nix"
+    ]
   },
   "python-lang": {
     "prefix": "python-lang",
@@ -154,9 +148,7 @@
       "\t\t\tinstall.enable = $4{4|true|false};",
       "\t\t};",
       "\t};"
-    ],
-    "description": "Python Language",
-    "scope": "devenv.nix"
+    ]
   },
   "javascript-lang": {
     "prefix": "javascript-lang",
@@ -167,9 +159,7 @@
       "\t\tnpm.enable = $2{|true|false};",
       "\t\t};",
       "\t};"
-    ],
-    "description": "Javascript Language",
-    "scope": "devenv.nix"
+    ]
   },
   "postgress-service": {
     "prefix": "postgress-service",
@@ -183,9 +173,7 @@
       "\t\t\tinitialScript = ''",
       "\t\t\t\tCREATE USER developer WITH PASSWORD 'secret' SUPERUSER;",
       "\t\t\t'';"
-    ],
-    "description": "Postgress Service",
-    "scope": "devenv.nix"
+    ]
   },
   "go-lint": {
     "prefix": "go-lint",
@@ -194,8 +182,6 @@
       "\t\t\tgolangci-lint = {",
       "\t\t\t\tenable = true;",
       "\t\t\t# Enforce all configured rules inside your project's local `.golangci.yml`"
-    ],
-    "description": "Go Linter",
-    "scope": "devenv.nix"
+    ]
   }
 }

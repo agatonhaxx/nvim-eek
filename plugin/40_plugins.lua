@@ -38,44 +38,51 @@ local now_if_args, later = Config.now_if_args, Config.later
 --   with `:TSInstall <language>`. Be sure to have necessary system dependencies
 --   (see MiniMax README section for software requirements).
 now_if_args(function()
-  -- Define hook to update tree-sitter parsers after plugin is updated
-  local ts_update = function() vim.cmd('TSUpdate') end
-  Config.on_packchanged('nvim-treesitter', { 'update' }, ts_update, ':TSUpdate')
+	-- Define hook to update tree-sitter parsers after plugin is updated
+	local ts_update = function()
+		vim.cmd("TSUpdate")
+	end
+	Config.on_packchanged("nvim-treesitter", { "update" }, ts_update, ":TSUpdate")
 
-  add({
-    'https://github.com/nvim-treesitter/nvim-treesitter',
-    'https://github.com/nvim-treesitter/nvim-treesitter-textobjects',
-  })
+	add({
+		"https://github.com/nvim-treesitter/nvim-treesitter",
+		"https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
+	})
 
-  -- Define languages which will have parsers installed and auto enabled
-  -- After changing this, restart Neovim once to install necessary parsers. Wait
-  -- for the installation to finish before opening a file for added language(s).
-  local languages = {
-    -- These are already pre-installed with Neovim. Used as an example.
-    'lua',
-    'vimdoc',
-    'markdown',
-    -- Add here more languages with which you want to use tree-sitter
-    -- To see available languages:
-    -- - Execute `:=require('nvim-treesitter').get_available()`
-    -- - Visit 'SUPPORTED_LANGUAGES.md' file at
-    --   https://github.com/nvim-treesitter/nvim-treesitter/blob/main
-  }
-  local isnt_installed = function(lang)
-    return #vim.api.nvim_get_runtime_file('parser/' .. lang .. '.*', false) == 0
-  end
-  local to_install = vim.tbl_filter(isnt_installed, languages)
-  if #to_install > 0 then require('nvim-treesitter').install(to_install) end
+	-- Define languages which will have parsers installed and auto enabled
+	-- After changing this, restart Neovim once to install necessary parsers. Wait
+	-- for the installation to finish before opening a file for added language(s).
+	local languages = {
+		-- These are already pre-installed with Neovim. Used as an example.
+		"json",
+		"lua",
+		"markdown",
+		"vimdoc",
+		-- Add here more languages with which you want to use tree-sitter
+		-- To see available languages:
+		-- - Execute `:=require('nvim-treesitter').get_available()`
+		-- - Visit 'SUPPORTED_LANGUAGES.md' file at
+		--   https://github.com/nvim-treesitter/nvim-treesitter/blob/main
+	}
+	local isnt_installed = function(lang)
+		return #vim.api.nvim_get_runtime_file("parser/" .. lang .. ".*", false) == 0
+	end
+	local to_install = vim.tbl_filter(isnt_installed, languages)
+	if #to_install > 0 then
+		require("nvim-treesitter").install(to_install)
+	end
 
-  -- Enable tree-sitter after opening a file for a target language
-  local filetypes = {}
-  for _, lang in ipairs(languages) do
-    for _, ft in ipairs(vim.treesitter.language.get_filetypes(lang)) do
-      table.insert(filetypes, ft)
-    end
-  end
-  local ts_start = function(ev) vim.treesitter.start(ev.buf) end
-  Config.new_autocmd('FileType', filetypes, ts_start, 'Start tree-sitter')
+	-- Enable tree-sitter after opening a file for a target language
+	local filetypes = {}
+	for _, lang in ipairs(languages) do
+		for _, ft in ipairs(vim.treesitter.language.get_filetypes(lang)) do
+			table.insert(filetypes, ft)
+		end
+	end
+	local ts_start = function(ev)
+		vim.treesitter.start(ev.buf)
+	end
+	Config.new_autocmd("FileType", filetypes, ts_start, "Start tree-sitter")
 end)
 
 -- Language servers ===========================================================
@@ -97,18 +104,19 @@ end)
 -- Troubleshooting:
 -- - Run `:checkhealth vim.lsp` to see potential issues.
 now_if_args(function()
-  add({ 'https://github.com/neovim/nvim-lspconfig' })
+	add({ "https://github.com/neovim/nvim-lspconfig" })
 
-  -- Use `:h vim.lsp.enable()` to automatically enable language server based on
-  -- the rules provided by 'nvim-lspconfig'.
-  -- Use `:h vim.lsp.config()` or 'after/lsp/' directory to configure servers.
-  -- Uncomment and tweak the following `vim.lsp.enable()` call to enable servers.
-  vim.lsp.enable({
-    -- For example, if `lua-language-server` is installed, use `'lua_ls'` entry
-    'lua_ls',
-    'nil_ls',
-    'pyright',
-  })
+	-- Use `:h vim.lsp.enable()` to automatically enable language server based on
+	-- the rules provided by 'nvim-lspconfig'.
+	-- Use `:h vim.lsp.config()` or 'after/lsp/' directory to configure servers.
+	-- Uncomment and tweak the following `vim.lsp.enable()` call to enable servers.
+	vim.lsp.enable({
+		-- For example, if `lua-language-server` is installed, use `'lua_ls'` entry
+		"lua_ls",
+		"nil_ls",
+		"pyright",
+		"devenv",
+	})
 end)
 
 -- Formatting =================================================================
@@ -120,37 +128,38 @@ end)
 -- The 'stevearc/conform.nvim' plugin is a good and maintained solution for easier
 -- formatting setup.
 later(function()
-  add({ 'https://github.com/stevearc/conform.nvim' })
+	add({ "https://github.com/stevearc/conform.nvim" })
 
-  -- See also:
-  -- - `:h Conform`
-  -- - `:h conform-options`
-  -- - `:h conform-formatters`
+	-- See also:
+	-- - `:h Conform`
+	-- - `:h conform-options`
+	-- - `:h conform-formatters`
 
-require("conform").setup({
-    format_on_save = function(bufnr)
-        -- Disable with a global or buffer-local variable
-        if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
-            return
-        end
-        return { timeout_ms = 500, lsp_format = "fallback" }
-    end,
-    formatters_by_ft = {
-        css = { "prettierd", "prettier", stop_after_first = true },
-        html = { "prettierd", "prettier", stop_after_first = true },
-        java = { "google-java-format" },
-        javascript = { "prettierd", "prettier", stop_after_first = true },
-        javascriptreact = { "prettierd", "prettier", stop_after_first = true },
-        lua = { "stylua" },
-        markdown = { "prettierd", "prettier", stop_after_first = true },
-        nix = { "nixfmt" },
-        python = { "black" },
-        rust = { "rustfmt" },
-        typescript = { "prettierd", "prettier", stop_after_first = true },
-        typescriptreact = { "prettierd", "prettier", stop_after_first = true },
-    },
-    notify_on_error = true,
-})
+	require("conform").setup({
+		format_on_save = function(bufnr)
+			-- Disable with a global or buffer-local variable
+			if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+				return
+			end
+			return { timeout_ms = 500, lsp_format = "fallback" }
+		end,
+		formatters_by_ft = {
+			css = { "prettierd", "prettier", stop_after_first = true },
+			html = { "prettierd", "prettier", stop_after_first = true },
+			java = { "google-java-format" },
+			javascript = { "prettierd", "prettier", stop_after_first = true },
+			javascriptreact = { "prettierd", "prettier", stop_after_first = true },
+			json = { "jq", "jq", stop_after_first = true },
+			lua = { "stylua" },
+			markdown = { "prettierd", "prettier", stop_after_first = true },
+			nix = { "nixfmt" },
+			python = { "black" },
+			rust = { "rustfmt" },
+			typescript = { "prettierd", "prettier", stop_after_first = true },
+			typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+		},
+		notify_on_error = true,
+	})
 end)
 
 -- Snippets ===================================================================
@@ -163,36 +172,36 @@ end)
 -- 'mini.snippets' is designed to work with it as seamlessly as possible.
 -- See `:h MiniSnippets.gen_loader.from_lang()`.
 later(function()
-  add({
-    'https://github.com/rafamadriz/friendly-snippets',
-  })
+	add({
+		"https://github.com/rafamadriz/friendly-snippets",
+	})
 end)
 
 -- zk must be on 'runtimepath' before 'after/ftplugin/markdown.lua' runs: that
 -- ftplugin requires 'zk.util' on 'FileType markdown', which fires during
 -- startup when opening a file, before `later` callbacks run.
 now_if_args(function()
-  add({ 'https://github.com/zk-org/zk-nvim' })
+	add({ "https://github.com/zk-org/zk-nvim" })
 
-  require('zk').setup({
-    lsp = {
-      auto_attach = { enabled = true, filetypes = { 'markdown' } },
-      config = { cmd = { 'zk', 'lsp' }, name = 'zk' },
-    },
-    picker = 'minipick',
-  })
+	require("zk").setup({
+		lsp = {
+			auto_attach = { enabled = true, filetypes = { "markdown" } },
+			config = { cmd = { "zk", "lsp" }, name = "zk" },
+		},
+		picker = "minipick",
+	})
 end)
 
 -- Global mappings for zk. Buffer-local mappings scoped to a notebook root
 -- live in 'after/ftplugin/markdown.lua'.
 local zmap = function(lhs, rhs, desc)
-  vim.keymap.set('n', lhs, rhs, { desc = desc })
+	vim.keymap.set("n", lhs, rhs, { desc = desc })
 end
-zmap('<Leader>zn', "<Cmd>ZkNew { title = vim.fn.input('Title: ') }<CR>", 'Create Zk note')
-zmap('<Leader>zo', "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", 'Open Zk notes')
-zmap('<Leader>zt', '<Cmd>ZkTags<CR>', 'Open Zk notes with tag')
-zmap('<Leader>zf', "<Cmd>ZkNotes { sort = { 'modified' }, match = { vim.fn.input('Search: ') } }<CR>", 'Find Zk note')
-vim.keymap.set('x', '<Leader>zf', ":'<,'>ZkMatch<CR>", { desc = 'Find Zk note from selection' })
+zmap("<Leader>zn", "<Cmd>ZkNew { title = vim.fn.input('Title: ') }<CR>", "Create Zk note")
+zmap("<Leader>zo", "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", "Open Zk notes")
+zmap("<Leader>zt", "<Cmd>ZkTags<CR>", "Open Zk notes with tag")
+zmap("<Leader>zf", "<Cmd>ZkNotes { sort = { 'modified' }, match = { vim.fn.input('Search: ') } }<CR>", "Find Zk note")
+vim.keymap.set("x", "<Leader>zf", ":'<,'>ZkMatch<CR>", { desc = "Find Zk note from selection" })
 
 -- Honorable mentions =========================================================
 
@@ -213,14 +222,14 @@ vim.keymap.set('x', '<Leader>zf', ":'<,'>ZkMatch<CR>", { desc = 'Find Zk note fr
 -- have full support of its highlight groups. Use if you don't like 'miniwinter'
 -- enabled in 'plugin/30_mini.lua' or other suggested 'mini.hues' based ones.
 Config.now(function()
- -- Install only those that you need
- add({
-   'https://github.com/folke/tokyonight.nvim',
-   'https://github.com/sainnhe/everforest',
-   'https://github.com/Shatur/neovim-ayu',
-   'https://github.com/ellisonleao/gruvbox.nvim',
- })
+	-- Install only those that you need
+	add({
+		"https://github.com/folke/tokyonight.nvim",
+		"https://github.com/sainnhe/everforest",
+		"https://github.com/Shatur/neovim-ayu",
+		"https://github.com/ellisonleao/gruvbox.nvim",
+	})
 
-  -- Enable only one
-  vim.cmd('color tokyonight')
+	-- Enable only one
+	vim.cmd("color tokyonight")
 end)

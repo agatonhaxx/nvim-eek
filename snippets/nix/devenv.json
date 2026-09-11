@@ -72,7 +72,7 @@
       "\t\t\t\tname = \"Gitleaks Security Scanner\";",
       "\t\t\t\t# entry points directly to the gitleaks binary from your pkgs definition",
       "\t\t\t\t# '--staged' optimizes the run to only scan files sitting in your Git index",
-      "\t\t\t\tentry = \"\${pkgs.gitleaks}/bin/gitleaks protect --verbose --staged\";",
+      "\t\t\t\tentry = \"gitleaks protect --verbose --staged\";",
       "\t\t\t\t# This tells the hook engine to evaluate every single file type",
       "\t\t\t\tfiles = \".*\";",
       "\t\t\t\t# This locks execution exactly to the pre-commit phase",

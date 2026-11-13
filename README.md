@@ -22,6 +22,7 @@ Runtime dependencies provided by the launcher (scoped to the nvim process, not t
 - LSP servers — `lua-language-server`, `nil`, `pyright`
 - formatters — `prettierd`/`prettier`, `google-java-format`, `stylua`, `nixfmt`, `black`, `rustfmt`
 - `zk` — the `zk-nvim` plugin
+- `lazygit` — terminal Git UI, opened with `<Leader>gg`
 
 ## Usage
 

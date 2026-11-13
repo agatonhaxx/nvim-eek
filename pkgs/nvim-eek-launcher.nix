@@ -1,7 +1,7 @@
 # Launcher for the nvim-eek config: points Neovim at the config directory
 # named by `appName` and provides the runtime dependencies the config expects:
 # git for `vim.pack`, ripgrep for pickers, a C compiler for nvim-treesitter
-# parser builds, plus the LSP servers and formatters wired up in
+# parser builds, lazygit for the Git UI, plus the LSP servers and formatters wired up in
 # 'plugin/40_plugins.lua' (zk powers the zk-nvim plugin).
 {
   lib,
@@ -23,6 +23,7 @@
   rustfmt,
   vscode-json-languageserver,
   zk,
+  lazygit,
   appName ? "nvim",
   withCompiler ? true,
 }:
@@ -45,6 +46,7 @@ writeShellApplication {
     rustfmt
     vscode-json-languageserver
     zk
+    lazygit
   ]
   ++ lib.optionals withCompiler [ stdenv.cc ];
   text = ''

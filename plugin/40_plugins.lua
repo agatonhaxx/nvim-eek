@@ -114,6 +114,7 @@ now_if_args(function()
 		"devenv lsp",
 		"jsonls",
 		"lua_ls",
+		"helm_ls",
 		"nil_ls",
 		"pyright",
 	})
